@@ -19,32 +19,36 @@ _创建工作流，让你的项目具备持续集成（CI）能力。_
   Define terms and link to docs.github.com.
 -->
 
-## Step 4: 添加分支保护规则
+## Step 2: 修复测试问题
 
-_太棒了! 你已经成功上传了测试报告! :partying_face:_
+_做得好！你已经成功添加了模板工作流! :tada:*_
 
-现在看看拉取请求的合并区域，你会发现：即使没有经过代码审查（review），这个分支仍然可以被合并。
+把这个文件添加到分支中后，GitHub Actions 就会自动在你的仓库上运行持续集成（CI）流程。
 
-为了避免这种情况，我们可以启用“分支保护”（Protected Branches）。
-分支保护能防止协作者直接对关键分支进行不可逆的修改，还可以开启一系列额外的限制，比如：
+当 GitHub Actions 开始执行工作流时，你会在拉取请求的合并区域看到类似下图的检查进度：
 
-* 必须通过状态检查（Status Checks）才能合并
-* 必须经过代码审查（Review）
-* 禁止强制推送（Force Push）等
+<img alt="checks in progress in a merge box" src=https://user-images.githubusercontent.com/16547949/66080348-ecc5f580-e533-11e9-909e-c213b08790eb.png width=400 />
 
-通过这些设置，可以更好地保护 `main` 分支的稳定性和代码质量。
+你可以通过进入 **Actions** 标签页，或者点击合并区域中的 **Details（详细信息）**，来查看 GitHub Actions 的执行情况。
 
-### :keyboard: 实操环节: 添加分支保护
+测试完成后，你会看到一个红色叉号 :x:（代表失败）或 :heavy_check_mark:（代表通过）。这时，你可以打开构建日志，查看每个步骤的执行结果。
 
-1. 打开仓库的 **Branches（分支）** 设置页面。你可以在仓库顶部最右侧点击 **Settings（设置）** 标签，然后在左侧菜单中点击 **Branches**。
-2. 在 “Branch protection rules” 区域下，点击 **Add classic branch protection rule（添加经典分支保护规则）**。
-3. 在 **Branch name pattern（分支名称模式）** 中输入 `main`。
-4. 勾选 **Require a pull request before merging（合并前需要拉取请求）**。
-5. 取消勾选 **Require approvals（需要审批）**。
-6. 勾选 **Require status checks to pass before merging（合并前必须通过状态检查）**。
-7. 在出现的灰色区域中，勾选所有你希望强制通过的构建与测试任务。
-8. 点击 **Create（创建）** 保存规则。
-9. 一旦启用了分支保护，GitHub Actions 将不能再直接向 `main` 分支推送代码。等待大约 20 秒后，切换到 `ci` 分支。[GitHub Actions](https://docs.github.com/actions) 会自动检测到更改，并在 `ci` 分支中进入下一步。
+_能从日志中看出是哪个测试没通过吗？_
+进入一个失败的构建，向下滚动日志，找到列出所有单元测试的部分。带有 “x” 的那一项就是出错的测试。
+
+<img alt="screenshot of a sample build log with the names of the tests blurred out" src=https://user-images.githubusercontent.com/16547949/65922013-e740a200-e3b1-11e9-8151-faf52c30201e.png width=400 />
+
+如果没有出现检查结果，或者检查卡在“运行中”状态，可以尝试以下方法让它重新触发：
+
+* 刷新页面，有时工作流已运行完，但页面尚未更新。
+* 在当前分支上再提交一次，因为工作流是通过 `push` 事件触发的。
+* 打开 GitHub 上的工作流文件，确认没有红色波浪线提示语法错误。
+
+### :keyboard: 实操环节：修复测试问题
+
+1. 修改 `ci` 分支中的内容，为了让测试能够通过。你需要查看日志来找出失败的原因。
+2. **提交更改（Commit changes）**。
+3. 等待大约 20 秒，然后刷新此页面（当前教程页面）。[GitHub Actions](https://docs.github.com/actions) 会自动检测并跳转到下一步。
 
 <footer>
 
