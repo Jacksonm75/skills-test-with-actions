@@ -14,48 +14,37 @@ _创建工作流，让你的项目具备持续集成（CI）能力。_
 </header>
 
 <!--
-  <<< Author notes: Step 3 >>>
+  <<< Author notes: Step 4 >>>
   Start this step by acknowledging the previous step.
   Define terms and link to docs.github.com.
 -->
 
-## Step 3: 上传测试报告
+## Step 4: 添加分支保护规则
 
-_工作流已经运行完成啦! :tada:_
+_太棒了! 你已经成功上传了测试报告! :partying_face:_
 
-那如果我们想在另一个任务（job）中使用上一个任务的输出结果，该怎么办呢？
-可以借助 GitHub Actions 内置的 [artifact 存储功能](https://docs.github.com/actions/advanced-guides/storing-workflow-data-as-artifacts)，把某个任务生成的文件保存下来，供同一个工作流中的其他任务使用。
+现在看看拉取请求的合并区域，你会发现：即使没有经过代码审查（review），这个分支仍然可以被合并。
 
-要上传这些文件（称为“构件”或 artifact），我们可以使用 GitHub 官方提供的 [`actions/upload-artifact`](https://github.com/actions/upload-artifact) 这个 Action。
+为了避免这种情况，我们可以启用“分支保护”（Protected Branches）。
+分支保护能防止协作者直接对关键分支进行不可逆的修改，还可以开启一系列额外的限制，比如：
 
-### :keyboard: 实操环节: 上传测试报告
+* 必须通过状态检查（Status Checks）才能合并
+* 必须经过代码审查（Review）
+* 禁止强制推送（Force Push）等
 
-1. 打开并编辑你的工作流文件。
-2. 在 `build` 任务中的 `Run markdown lint` 步骤里，修改命令，使用 `vfile-reporter-json` 把检测结果输出为 `remark-lint-report.json`。
-3. 在 `build` 任务中添加一个新步骤，使用 `upload-artifact` 动作，把生成的 `remark-lint-report.json` 文件上传到 artifact 存储中。
-4. 修改后的 `build` 任务应如下所示：
+通过这些设置，可以更好地保护 `main` 分支的稳定性和代码质量。
 
-   ```yml
-   build:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v4
+### :keyboard: 实操环节: 添加分支保护
 
-       - name: Run markdown lint
-         run: |
-           npm install remark-cli remark-preset-lint-consistent vfile-reporter-json
-           npx remark . --use remark-preset-lint-consistent --report vfile-reporter-json 2> remark-lint-report.json
-
-       - uses: actions/upload-artifact@v4
-         with:
-           name: remark-lint-report
-           path: remark-lint-report.json
-
-5. 提交（Commit）修改到当前分支。
-6. 等待大约 20 秒，然后刷新本教程页面。[GitHub Actions](https://docs.github.com/actions) 会自动检测更新并进入下一步。
-
-就像 `upload-artifact` 负责上传文件一样，你也可以使用 [`actions/download-artifact`](https://github.com/actions/download-artifact) 在后续任务中下载这些文件。
-不过，为了让课程流程更简洁，这里我们暂时不演示下载步骤。
+1. 打开仓库的 **Branches（分支）** 设置页面。你可以在仓库顶部最右侧点击 **Settings（设置）** 标签，然后在左侧菜单中点击 **Branches**。
+2. 在 “Branch protection rules” 区域下，点击 **Add classic branch protection rule（添加经典分支保护规则）**。
+3. 在 **Branch name pattern（分支名称模式）** 中输入 `main`。
+4. 勾选 **Require a pull request before merging（合并前需要拉取请求）**。
+5. 取消勾选 **Require approvals（需要审批）**。
+6. 勾选 **Require status checks to pass before merging（合并前必须通过状态检查）**。
+7. 在出现的灰色区域中，勾选所有你希望强制通过的构建与测试任务。
+8. 点击 **Create（创建）** 保存规则。
+9. 一旦启用了分支保护，GitHub Actions 将不能再直接向 `main` 分支推送代码。等待大约 20 秒后，切换到 `ci` 分支。[GitHub Actions](https://docs.github.com/actions) 会自动检测到更改，并在 `ci` 分支中进入下一步。
 
 <footer>
 
