@@ -14,7 +14,7 @@ _创建工作流，让你的项目具备持续集成（CI）能力。_
 </header>
 
 <!--
-  <<< Author notes: Step 2 >>>
+  <<< Author notes: Step 3 >>>
   Start this step by acknowledging the previous step.
   Define terms and link to docs.github.com.
 -->
